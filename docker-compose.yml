@@ -19,6 +19,7 @@ services:
       context: .
       dockerfile: crm-service/Dockerfile
     environment:
+      SERVER_ADDRESS: 0.0.0.0
       DB_URL: jdbc:postgresql://crm-db:5432/socialbridge_crm
       DB_USER: socialbridge
       DB_PASSWORD: ${DB_PASSWORD:-local_only_change_me}
@@ -27,5 +28,11 @@ services:
         condition: service_healthy
     ports:
       - "127.0.0.1:8081:8081"
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail --silent http://127.0.0.1:8081/actuator/health/readiness | grep -q '\"status\":\"UP\"'"]
+      interval: 5s
+      timeout: 5s
+      start_period: 30s
+      retries: 18
 volumes:
   crm_db_data:

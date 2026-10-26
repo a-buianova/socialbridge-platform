@@ -2,9 +2,12 @@ name: CI
 on:
   push:
   pull_request:
+permissions:
+  contents: read
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -12,5 +15,17 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: maven
-      - name: Test and package
+      - name: Verify with PostgreSQL Testcontainers
         run: mvn -B verify
+      - name: Build and start the local application
+        run: docker compose up --build --wait --wait-timeout 180 -d
+      - name: Check readiness and the contact API
+        run: |
+          curl --fail --silent http://127.0.0.1:8081/actuator/health/readiness
+          curl --fail --silent http://127.0.0.1:8081/api/v1/contacts
+      - name: Collect service logs
+        if: failure()
+        run: docker compose logs --no-color
+      - name: Stop local services
+        if: always()
+        run: docker compose down

@@ -1,6 +1,7 @@
 # ADR-0001 — Modular microservices monorepo
 
-**Status:** Proposed  
+**Status:** Accepted for the initial CRM implementation
+
 **Context:** SocialBridge needs independently evolvable CRM, fundraising, communication and identity responsibilities, but starts with one small engineering team and a single CRM scaffold.
 
 **Decision:** Keep a Maven monorepo with independently buildable Spring Boot applications per business boundary. Each owns its database and migrations. Do not add processes until an independent domain responsibility and integration contract exist. Use synchronous REST initially and event messaging only when durable asynchronous workflows justify it.
