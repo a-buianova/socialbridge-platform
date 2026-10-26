@@ -1,5 +1,6 @@
 package org.socialbridge.crm.contact;
 import jakarta.validation.Valid;
+import org.socialbridge.crm.shared.BadRequestException;
 import org.springframework.data.domain.*;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
